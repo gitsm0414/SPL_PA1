@@ -41,7 +41,8 @@ int main(int argc, char* argv[]){
 	fbuf = (char*)malloc(FMAX*sizeof(char));
 	ibuf = (char*)malloc(IMAX*sizeof(char));
 	obuf = (char*)malloc(OMAX*sizeof(char));
-	
+	oidx = 0; //initialize
+
 	//memory allocating of 'words'
 	words = (char**)malloc(WMAX*sizeof(char*));
 	for(int i=0; i<WMAX; i++){
@@ -71,7 +72,7 @@ int main(int argc, char* argv[]){
 		}
 
 		inputcase = casereturn(ibuf);
-		if(inputcase=-1){
+		if(inputcase==-1){
 			perror("invald input");
 			exit(1);
 		}
