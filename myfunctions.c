@@ -112,7 +112,7 @@ int casereturn(char* buf, int maxidx){
 }
 
 // copy string
-void cp(char* buf, int idx, int maxidx char* word){
+void cp(char* buf, int idx, int maxidx, char* word){
 	char* wordp = word;
 	int blk;
 	while(((blk = isblank(buf, i)) != 1) && (idx<maxidx)){
