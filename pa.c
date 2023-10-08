@@ -70,8 +70,8 @@ int main(int argc, char* argv[]){
 			perror("input reading error");
 			exit(1);
 		}
-
-		inputcase = casereturn(ibuf);
+		//checking case
+		inputcase = casereturn(ibuf, (int)bytesRead);
 		if(inputcase==-1){
 			perror("invald input");
 			exit(1);
