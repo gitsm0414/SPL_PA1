@@ -8,7 +8,7 @@
 
 #define FMAX 1000000 //file buf max
 #define IMAX 4096 //input buf max
-#define OMAX 10000 //output buf max
+#define OMAX 50000 //output buf max
 #define WMAX 1000 //word max
 #define WMAXL 46 //word legnth max
 
@@ -18,6 +18,7 @@ char* obuf; //output buffer
 char** words; //input words
 int wordnum //the number of input words
 ssize_t bytesRead;
+int oidx; //current index of obuf
 
 void cleanup(void){
 	if(fbuf!=NULL) free(fbuf);
@@ -27,7 +28,7 @@ void cleanup(void){
 	for(int i=0; i<WMAX; i++){
 		if(words[i]!=NULL) free(words[i]);
 	}
-	free(words);
+	if(words!=NULL) free(words);
 }
 
 int main(int argc, char* argv[]){
@@ -48,11 +49,14 @@ int main(int argc, char* argv[]){
 
 	int fd; //file descriptor
 	ssize_t bytesWrite;
-	off_t pos; //current position
+	off_t pos; //current position of file
 	
 	int curline; //current line(file)
 	int curidx; //current index(file)
 	
+	int inputcase;//case 0~4
+	int flag = 1; //if 0, then terminate 'while'
+
 	atexit(cleanup); //cleanup when exit
 
 	if(argc!=2){  // when the number of arguments is not one, print error and exit
@@ -60,7 +64,49 @@ int main(int argc, char* argv[]){
 		exit(1);
 	}
 
+	do{
+		if((bytesRead = read(STDIN_FILENO, ibuf, imax))==-1){
+			perror("input reading error");
+			exit(1);
+		}
 
+		inputcase = casereturn(ibuf);
+		if(inputcase=-1){
+			perror("invald input");
+			exit(1);
+		}
+
+		//!!preproc(ibuf, inputcase, words,  &wordnum);
+
+		switch(inputcase){
+			case 0:
+				break;
+			case 1:
+				break;
+			case 2:
+				break;
+			case 3:
+				break;
+			case 4:
+				flag = 0;
+				break;
+			default:
+		}
+	if(flag!=0){
+		//output buffer preprocessing
+		if(oidx==0) obuf[odix]='\n'; 
+		else obuf[oidx-1]='\n'; 
+		
+		//print output
+		if((bytesWrite = wirte(STDOUT_FILENO, obuf, (size_t)oidx))==-1){
+			perror("output error");
+			exit(1);
+		}
+		//variable reinitializing
+		oidx=0;
+	}
+
+	}while(flag!=0);
 
 	cleanup(); //free the memories
 
