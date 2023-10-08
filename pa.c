@@ -81,6 +81,7 @@ int main(int argc, char* argv[]){
 
 		switch(inputcase){
 			case 0:
+				flag = 0;
 				break;
 			case 1:
 				break;
@@ -89,23 +90,23 @@ int main(int argc, char* argv[]){
 			case 3:
 				break;
 			case 4:
-				flag = 0;
 				break;
 			default:
 		}
-	if(flag!=0){
-		//output buffer preprocessing
-		if(oidx==0) obuf[oidx]='\n'; 
-		else obuf[oidx-1]='\n'; 
+		if(flag!=0){
+			//output buffer preprocessing
+			if(oidx==0) obuf[oidx]='\n'; 
+			else obuf[oidx-1]='\n'; 
 		
-		//print output
-		if((bytesWrite = write(STDOUT_FILENO, obuf, (size_t)oidx))==-1){
-			write(STDERR_FILENO, "output error\n", 14);
-			exit(1);
+			//print output
+			if((bytesWrite = write(STDOUT_FILENO, obuf, (size_t)oidx))==-1){
+				write(STDERR_FILENO, "output error\n", 14);
+				exit(1);
+			}
+			//variable reinitializing
+			oidx=0;
+			//lseek(fd, 0, SEEK_SET);
 		}
-		//variable reinitializing
-		oidx=0;
-	}
 
 	}while(flag!=0);
 

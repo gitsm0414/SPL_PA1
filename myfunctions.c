@@ -73,15 +73,19 @@ int isstart(char* buf, int idx){
 //if buf has equal word strating from idx, then return 1, else 0, if error, return -1
 int eqword(char* buf, int idx, int maxidx,  char* word){
 	char* wordp = word;
-	while(*wordp!='\0'){
+	char buf_char;
+	char word_char;
+	while(*wordp!='\0' && (idx < maxidx)){
 		// if idx out of bounds, return -1
 		if(idx>= maxidx) return -1;
-		
+			
 		//if uppercase, change to lowercase
-		if(buf[idx]<='Z') buf[idx] += ('a' - 'A');
-		if(*wordp<='Z') *wordp += ('a' - 'A');
+		buf_char = buf[idx];
+		word_char = *wordp;
+		if(buf_char<='Z') buf_char += ('a' - 'A');
+		if(word_char<='Z') word_char += ('a' - 'A');
 
-		if(buf[idx] != *wordp) return 0;
+		if(buf_char != word_char) return 0;
 		idx++;
 		wordp++;
 	}
