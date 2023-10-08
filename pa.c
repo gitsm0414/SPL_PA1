@@ -12,44 +12,38 @@
 #define WMAX 1000 //word max
 #define WMAXL 46 //word legnth max
 
-char* fbuf; //file buffer
-char* ibuf; //input buffer
-char* obuf; //output buffer
-char** words; //input words
-int wordnum; //the number of input words
-ssize_t bytesRead;
-int oidx; //current index of obuf
+char** words;
 
 void cleanup(void){
-	if(fbuf!=NULL) free(fbuf);
-	if(ibuf!=NULL) free(ibuf);
-	if(obuf!=NULL) free(obuf);
-
 	for(int i=0; i<WMAX; i++){
-		if(words[i]!=NULL) free(words[i]);
+		free(words[i]);
 	}
-	if(words!=NULL) free(words);
+	free(words);
 }
 
 int main(int argc, char* argv[]){
 	char* inputError = "There should be only one argument.\n";
 	int inputErrorNum = 35;
-
+	
+	char fbuf[FMAX]; //file buffer
+	char ibuf[IMAX]; //input buffer
+	char obuf[OMAX]; //output buffer
 	size_t fmax = (size_t)FMAX;
 	size_t imax = (size_t)IMAX;
 	size_t omax = (size_t)OMAX;
-	fbuf = (char*)malloc(FMAX*sizeof(char));
-	ibuf = (char*)malloc(IMAX*sizeof(char));
-	obuf = (char*)malloc(OMAX*sizeof(char));
-	oidx = 0; //initialize
-
-	//memory allocating of 'words'
-	words = (char**)malloc(WMAX*sizeof(char*));
+	
+	//memory allocating, words
+	words = (char**)malloc(WMAX * sizeof(char*));
 	for(int i=0; i<WMAX; i++){
-		words[i] = (char*)malloc(sizeof(char)*WMAXL);
+		words[i] = (char*)malloc(WMAXL * sizeof(char))
 	}
+	int wordnum; //the number of input words
+	int oidx; //current index of obuf
+	oidx = 0; //initialize
+	
 	int fd; //file descriptor
 	ssize_t bytesWrite;
+	ssize_t bytesRead;
 	off_t pos; //current position of file
 	
 	int curline; //current line(file)
@@ -58,7 +52,7 @@ int main(int argc, char* argv[]){
 	int inputcase;//case 0~4
 	int flag = 1; //if 0, then terminate 'while'
 
-	atexit(cleanup); //cleanup when exit
+	atexit(cleanup);
 
 	if(argc!=2){  // when the number of arguments is not one, print error and exit
 		write(STDERR_FILENO, inputError, inputErrorNum); 
@@ -110,7 +104,6 @@ int main(int argc, char* argv[]){
 
 	}while(flag!=0);
 
-	cleanup(); //free the memories
-
+	cleanup();
 	return 0;
 }

@@ -32,7 +32,7 @@ ssize_t readBySentence(int fd, char* usrbuf, size_t n){
 	if(usrbuf[idx-1]!='\n'){ //if last char of usrbuf is not '\n'
 		if(idx == n){ //last sentence of usrbuf was interrupted by buffer limit
 			int i = idx-1;
-			while(usrbuf[i]!='\n'){
+			while((usrbuf[i]!='\n') && (i > 1)){
 				lseek(fd, -1, SEEK_CUR);
 				nleft++;
 				i--;
@@ -49,6 +49,7 @@ int len(char* ptr){
 	int i=0;
 	while(*temp != '\0'){
 		i++;
+		temp++;
 	}
 	return i;
 }
@@ -62,7 +63,10 @@ int isblank_(char* buf, int idx){
 
 //if idx is start of the word, return 1, else 0
 int isstart(char* buf, int idx){
-	if(idx == 0) return 1;
+	if(idx == 0){
+		if(isblank(buf, 0)) return 0;
+		else return 1;
+	} 
 	if(isblank_(buf, idx-1)){
 		if(isblank_(buf, idx)) return 0;
 		else return 1;
@@ -115,7 +119,7 @@ int casereturn(char* buf, int maxidx){
 	return 1;
 }
 
-// copy string
+// copy string(from buf to word)
 void cp(char* buf, int idx, int maxidx, char* word){
 	char* wordp = word;
 	int blk;
