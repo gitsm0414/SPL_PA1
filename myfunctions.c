@@ -1,5 +1,5 @@
 //my functions
-#include "my.h"
+#include "myheader.h"
 #include<unistd.h>
 #include<sys/types.h>
 #include<errno.h>
@@ -32,7 +32,7 @@ ssize_t readBySentence(int fd, char* usrbuf, size_t n){
 	if(usrbuf[idx-1]!='\n'){ //if last char of usrbuf is not '\n'
 		if(idx == n){ //last sentence of usrbuf was interrupted by buffer limit
 			int i = idx-1;
-			while(usrbuf[i]!='n'){
+			while(usrbuf[i]!='\n'){
 				lseek(fd, -1, SEEK_CUR);
 				nleft++;
 				i--;
@@ -46,7 +46,7 @@ ssize_t readBySentence(int fd, char* usrbuf, size_t n){
 //return string length
 int len(char* ptr){
 	char* temp = ptr;
-	i=0;
+	int i=0;
 	while(*temp != '\0'){
 		i++;
 	}
@@ -55,16 +55,16 @@ int len(char* ptr){
 
 
 //if buf[idx] is blank, return 1, else 0
-int isblank(char* buf, int idx){
+int isblank_(char* buf, int idx){
 	if(buf[idx]==' ' || buf[idx]=='\t' || buf[idx]=='\n') return 1;
 	else return 0;
 }
 
 //if idx is start of the word, return 1, else 0
 int isstart(char* buf, int idx){
-	if(idx == 0) reutrn 1;
-	if(isblank(buf, idx-1)){
-		if(isblank(buf, idx)) return 0;
+	if(idx == 0) return 1;
+	if(isblank_(buf, idx-1)){
+		if(isblank_(buf, idx)) return 0;
 		else return 1;
 	}
 	return 0;
@@ -106,7 +106,7 @@ int casereturn(char* buf, int maxidx){
 		if(buf[i]=='*') return 4;
 	}
 	for(int i=0; i<maxidx; i++){
-		if(isblank(buf, i)) return 2;		
+		if(isblank_(buf, i)) return 2;		
 	}
 	return 1;
 }
@@ -115,9 +115,9 @@ int casereturn(char* buf, int maxidx){
 void cp(char* buf, int idx, int maxidx, char* word){
 	char* wordp = word;
 	int blk;
-	while(((blk = isblank(buf, i)) != 1) && (idx<maxidx)){
-		*wordp = buf[i];
-		i++;
+	while(((blk = isblank_(buf, idx)) != 1) && (idx<maxidx)){
+		*wordp = buf[idx];
+		idx++;
 		wordp++;
 	}
 	*wordp = '\0'; // all word ends '\0'
@@ -132,7 +132,7 @@ void preproc(char* buf, int casenum, int maxidx,  char** word, int* wordn){
 		case 0: //pa1exit, do nothing
 			break;
 		case 1:
-			cp(buf, 0, word[0]);
+			cp(buf, 0, maxidx, word[0]);
 			*wordn = 1;
 			break;
 		case 2:
@@ -150,8 +150,9 @@ void preproc(char* buf, int casenum, int maxidx,  char** word, int* wordn){
 			break;
 		case 4:
 			int star;//index of *
-			for(int i=0; i<maxidx, i++)
+			for(int i=0; i<maxidx; i++){
 				if(buf[i]=='*') star = i;
+			}
 
 			cp(buf, 0, star, word[0]);
 			cp(buf, star+1, maxidx, word[1]);
@@ -160,7 +161,6 @@ void preproc(char* buf, int casenum, int maxidx,  char** word, int* wordn){
 		default:	
 	}	
 }
-
 
 
 

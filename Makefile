@@ -1,6 +1,6 @@
 #Makefile
 
-target=pa
+target=pa1
 objects=pa.o myfunctions.o
 
 $(target): $(objects)

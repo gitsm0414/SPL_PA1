@@ -10,7 +10,7 @@ ssize_t readBySentence(int fd, char* usrbuf, size_t n);
 
 int len(char* ptr);
 
-int isblank(char* buf, int idx);
+int isblank_(char* buf, int idx);
 
 int isstart(char* buf, int idx);
 

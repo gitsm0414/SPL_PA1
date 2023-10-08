@@ -16,7 +16,7 @@ char* fbuf; //file buffer
 char* ibuf; //input buffer
 char* obuf; //output buffer
 char** words; //input words
-int wordnum //the number of input words
+int wordnum; //the number of input words
 ssize_t bytesRead;
 int oidx; //current index of obuf
 
@@ -47,7 +47,7 @@ int main(int argc, char* argv[]){
 	words = (char**)malloc(WMAX*sizeof(char*));
 	for(int i=0; i<WMAX; i++){
 		words[i] = (char*)malloc(sizeof(char)*WMAXL);
-
+	}
 	int fd; //file descriptor
 	ssize_t bytesWrite;
 	off_t pos; //current position of file
@@ -67,17 +67,17 @@ int main(int argc, char* argv[]){
 
 	do{
 		if((bytesRead = read(STDIN_FILENO, ibuf, imax))==-1){
-			perror("input reading error");
+			write(STDERR_FILENO, "input reading error\n", 21);
 			exit(1);
 		}
 		//checking case
-		inputcase = casereturn(ibuf, (int)bytesRead);
+		inputcase = casereturn(ibuf, (int) bytesRead);
 		if(inputcase==-1){
-			perror("invald input");
+			write(STDERR_FILENO, "invald input\n", 14);
 			exit(1);
 		}
 
-		//!!preproc(ibuf, inputcase, words,  &wordnum);
+		preproc(ibuf, inputcase, (int) bytesRead, words,  &wordnum);
 
 		switch(inputcase){
 			case 0:
@@ -95,12 +95,12 @@ int main(int argc, char* argv[]){
 		}
 	if(flag!=0){
 		//output buffer preprocessing
-		if(oidx==0) obuf[odix]='\n'; 
+		if(oidx==0) obuf[oidx]='\n'; 
 		else obuf[oidx-1]='\n'; 
 		
 		//print output
-		if((bytesWrite = wirte(STDOUT_FILENO, obuf, (size_t)oidx))==-1){
-			perror("output error");
+		if((bytesWrite = write(STDOUT_FILENO, obuf, (size_t)oidx))==-1){
+			write(STDERR_FILENO, "output error\n", 14);
 			exit(1);
 		}
 		//variable reinitializing
