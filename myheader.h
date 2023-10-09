@@ -34,4 +34,6 @@ void addline(char* buf, int curline, int* oidx);
 
 void addlineidx(char* buf, int curline, int curidx, int* oidx);
 
+int case2f(char* buf, char** words, int* wordnum, char* sentence, int sidx);
+
 #endif

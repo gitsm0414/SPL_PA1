@@ -53,11 +53,11 @@ int main(int argc, char* argv[]){
 	int fd; //file descriptor	
 	ssize_t bytesWrite;
 	ssize_t bytesRead;
-	off_t pos; //current position of file
 	
 	int curline; //current line(file)
 	int curidx; //current index(file)
-	
+	char sentence[300]; //used when case 2 & 4, representing one sentence
+
 	int inputcase;//case 0~4
 	int flag = 1; //if 0, then terminate 'while'
 
@@ -125,7 +125,31 @@ int main(int argc, char* argv[]){
 			break;
 		case 2:
 			while((bytesRead = readBySentence(fd, fbuf, fmax)) > 0){
+				int maxidx = (int) bytesRead;
+				curline = 1;
+				curidx = 0;
 				
+				int sidx = 0; // sentence idx
+				int bufidx = 0; //buffer idx
+				
+				while(bufidx < maxidx){
+					if((fbuf[bufidx]=='\n') ||(bufidx+1 == maxidx)){
+						sentence[sidx]='\n';
+
+						int ret;
+						ret = case2f(fbuf, words, &wordnum, sentence, sidx);
+						
+						if(ret == 1){
+							addline(obuf, curline, &oidx);
+						}
+						bufidx++;
+						sidx = 0;
+						curline++;
+					}
+					else{
+						sentence[sidx++] = fbuf[bufidx++];
+					}
+				}			
 			}
 			if(bytesRead < 0){
 					write(STDERR_FILENO, "file reading error\n", 20);

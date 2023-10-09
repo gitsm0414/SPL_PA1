@@ -297,4 +297,21 @@ void addlineidx(char* buf, int curline, int curidx, int* oidx){
 	addline(buf, curidx, oidx);
 }
 
+//return 1 when the given sentence match the condition of case 2, otherwise return 0
+int case2f(char* buf, char** words, int* wordnum, char* sentence, int sidx){
+	int rest = *wordnum;
 
+	for(int i=0; i<*wordnum; i++){
+		int length = len(words[i]);
+		for(int j=0; j<(sidx - length + 1); j++){
+			if(isstart(buf, j)){
+				if(eqword(buf, j, sidx, words[i])){
+					rest--;
+					break;
+				}
+			}
+		}
+	}
+	if(rest == 0) return 1;
+	return 0;
+}
