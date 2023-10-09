@@ -137,7 +137,7 @@ int main(int argc, char* argv[]){
 						sentence[sidx]='\n';
 
 						int ret;
-						ret = case2f(fbuf, words, &wordnum, sentence, sidx);
+						ret = case2f(fbuf, words, &wordnum, sentence, sidx+1);
 						
 						if(ret == 1){
 							addline(obuf, curline, &oidx);

@@ -304,8 +304,8 @@ int case2f(char* buf, char** words, int* wordnum, char* sentence, int sidx){
 	for(int i=0; i<*wordnum; i++){
 		int length = len(words[i]);
 		for(int j=0; j<(sidx - length + 1); j++){
-			if(isstart(buf, j)){
-				if(eqword(buf, j, sidx, words[i])){
+			if(isstart(sentence, j)){
+				if(eqword(sentence, j, sidx, words[i])){
 					rest--;
 					break;
 				}
