@@ -9,10 +9,11 @@
 #define FMAX 1000000 //file buf max
 #define IMAX 4096 //input buf max
 #define OMAX 50000 //output buf max
-#define WMAX 1000 //word max
+#define WMAX 1500 //word max
 #define WMAXL 46 //word legnth max
 
 char** words;
+
 
 void cleanup(char** words){
 	for(int i=0; i<WMAX; i++){
@@ -21,6 +22,12 @@ void cleanup(char** words){
 	}
 	free(words);
 	words = NULL;
+}
+void closefile(int fd){
+	int ret;
+	if((ret = close(fd)) < 0){
+		write(STDERR_FILENO, "file closing error\n", 20);
+	}
 }
 
 int main(int argc, char* argv[]){
@@ -43,7 +50,7 @@ int main(int argc, char* argv[]){
 	int oidx; //current index of obuf
 	oidx = 0; //initialize
 	
-	int fd; //file descriptor
+	int fd; //file descriptor	
 	ssize_t bytesWrite;
 	ssize_t bytesRead;
 	off_t pos; //current position of file
@@ -60,10 +67,17 @@ int main(int argc, char* argv[]){
 		exit(1);
 	}
 
+	if((fd = open(argv[1], O_RDONLY)) < 0){
+		write(STDERR_FILENO, "file opening error\n", 20);
+		cleanup(words);
+		exit(1);
+	}
+
 	do{
 		if((bytesRead = read(STDIN_FILENO, ibuf, imax))==-1){
 			write(STDERR_FILENO, "input reading error\n", 21);
 			cleanup(words);
+			closefile(fd);
 			exit(1);
 		}
 		//checking case
@@ -71,39 +85,70 @@ int main(int argc, char* argv[]){
 		if(inputcase==-1){
 			write(STDERR_FILENO, "invald input\n", 14);
 			cleanup(words);
+			closefile(fd);
 			exit(1);
 		}
 
 		preproc(ibuf, inputcase, (int) bytesRead, words,  &wordnum);
 
 		switch(inputcase){
-			case 0:
-				flag = 0;
-				break;
-			case 1:
-				break;
-			case 2:
-				break;
-			case 3:
-				break;
-			case 4:
-				break;
-			default:
+		case 0:
+			flag = 0;
+			break;			
+		case 1:
+			while((bytesRead = readBySentence(fd, fbuf, fmax)) > 0){		
+				int maxidx = (int) bytesRead;
+				curline = 1;
+				curidx = 0;
+				int length = len(words[0]);
+
+				for(int i=0; i<(maxidx-length+1); i++){
+					if(fbuf[i]=='\n'){
+						curline++;
+						curidx=0;
+						continue;
+					}
+					if(isstart(fbuf, i)){
+						if(eqword(fbuf, i, maxidx, words[0])){
+							addlineidx(obuf, curline, curidx, &oidx);
+						}
+					}
+					curidx++;
+				}
+			}
+			if(bytesRead < 0){
+					write(STDERR_FILENO, "file reading error\n", 20);
+					cleanup(words);
+					closefile(fd);
+					exit(1);
+			}
+			break;
+		case 2:
+			break;
+		case 3:
+			break;
+		case 4:
+			break;
+		default:
 		}
 		if(flag!=0){
 			//output buffer preprocessing
-			if(oidx==0) obuf[oidx]='\n'; 
+			if(oidx==0){
+			       	obuf[oidx]='\n';
+				oidx++;
+			} 
 			else obuf[oidx-1]='\n'; 
-		
+
 			//print output
 			if((bytesWrite = write(STDOUT_FILENO, obuf, (size_t)oidx))==-1){
 				write(STDERR_FILENO, "output error\n", 14);
 				cleanup(words);
+				closefile(fd);
 				exit(1);
 			}
 			//variable reinitializing
 			oidx=0;
-			//lseek(fd, 0, SEEK_SET);
+			lseek(fd, 0, SEEK_SET);
 		}
 
 	}while(flag!=0);

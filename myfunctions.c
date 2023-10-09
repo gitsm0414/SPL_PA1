@@ -74,15 +74,12 @@ int isstart(char* buf, int idx){
 	return 0;
 }
 
-//if buf has equal word strating from idx, then return 1, else 0, if error, return -1
+//if buf has equal word strating from idx, then return 1, else 0
 int eqword(char* buf, int idx, int maxidx,  char* word){
 	char* wordp = word;
 	char buf_char;
 	char word_char;
 	while(*wordp!='\0' && (idx < maxidx)){
-		// if idx out of bounds, return -1
-		if(idx>= maxidx) return -1;
-			
 		//if uppercase, change to lowercase
 		buf_char = buf[idx];
 		word_char = *wordp;
@@ -93,7 +90,11 @@ int eqword(char* buf, int idx, int maxidx,  char* word){
 		idx++;
 		wordp++;
 	}
-	return 1;
+	if((*wordp=='\0') && (idx==maxidx)) return 1;
+	if(idx==maxidx) return 0;
+
+	if(isblank_(buf, idx)) return 1;
+	return 0;
 }
 /*
  * function: casereturn
@@ -102,6 +103,7 @@ int eqword(char* buf, int idx, int maxidx,  char* word){
  */
 int casereturn(char* buf, int maxidx){
 	if(maxidx <= 0) return -1;
+
 	if(buf[0]!='\"'){
 		char* ex = "PA1EXIT\n";
 		int eq;
@@ -110,10 +112,10 @@ int casereturn(char* buf, int maxidx){
 	}
 	if(buf[0]=='\"') return 3;
 	
-	for(int i=0; i<maxidx; i++){
+	for(int i=0; i<(maxidx-1); i++){
 		if(buf[i]=='*') return 4;
 	}
-	for(int i=0; i<maxidx; i++){
+	for(int i=0; i<(maxidx-1); i++){
 		if(isblank_(buf, i)) return 2;		
 	}
 	return 1;
