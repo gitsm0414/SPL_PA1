@@ -22,6 +22,16 @@ void cp(char* buf, int idx, int maxidx, char* word);
 
 void preproc(char* buf, int casenum, int maxidx, char** word, int * wordn);
 
+int eqphrase(char* buf, int idx, int maxidx, char* word);
 
+int wordexists(char* buf, int start, int end);
+
+void reverseStr(char* str, int legnth);
+
+int its(char* str, int num);
+
+void addline(char* buf, int curline, int* oidx);
+
+void addlineidx(char* buf, int curline, int curidx, int* oidx);
 
 #endif
