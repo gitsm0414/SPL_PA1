@@ -64,7 +64,7 @@ int isblank_(char* buf, int idx){
 //if idx is start of the word, return 1, else 0
 int isstart(char* buf, int idx){
 	if(idx == 0){
-		if(isblank(buf, 0)) return 0;
+		if(isblank_(buf, 0)) return 0;
 		else return 1;
 	} 
 	if(isblank_(buf, idx-1)){
@@ -170,7 +170,110 @@ void preproc(char* buf, int casenum, int maxidx,  char** word, int* wordn){
 	}	
 }
 
+/*
+ * function: eqphrase
+ * This function returns 1 when buf(starting from index i) has same phrase with word[]
+ * else, return 0
+ */
+int eqphrase(char* buf, int idx, int maxidx, char* word){
+	char widx =0; //word idx
+	char buf_char;
+	char word_char;
+	while((word[widx]='\0')&&(idx<maxidx)){
+		//both are not blank
+		if((isblank_(buf, idx)==0)&&(isblank_(word, widx)==0)){
+			//if uppercase, change to lower case
+			buf_char = buf[idx];
+			word_char = word[widx];
+			if(buf_char<='Z') buf_char += ('a' - 'A');
+			if(word_char<='Z') word_char += ('a' - 'A');
 
+			if(buf_char != word_char) return 0;		
+		}
+		else if((isblank_(buf, idx))*(isblank_(word, widx))==1){ //both are blank
+			if(buf[idx]=='\n' || word[widx]=='\n') return 0;
+			if(buf[idx] != word[widx]) return 0;
+		}
+		else{
+			return 0;	
+		}
+		widx++;
+		idx++;
+	}
+	return 1;
+}
 
+/*
+ * function: wordexists
+ * This function return 1 when there exist at least one word between the given idx
+ * If there is no word between them, return 0
+ * start idx is the next of the word1, end idx is one before the start of word2 
+ */
+int wordexists(char* buf, int start, int end){
+	if((start - end) >= -1) return 0;
+	if(isblank_(buf, start)==0 || isblank_(buf, end)==0) return 0;
+	
+	int i=start+1;
+	while(i<end){
+		if(isstart(buf, i)) return 1;
+	}
+	return 0;
+}
+
+//reverse string
+void reverseStr(char* str, int length){
+	int start = 0;
+	int end = length-1;
+	char temp;
+	while(start < end){
+		temp = str[start];
+		str[start] = str[end];
+		str[end] = temp;
+		start++;
+		end++;
+	}
+}
+
+//convert int to string, except '\0', and return the number's max place
+int its(char* str, int num){
+	int i = 0;
+
+	while(i!=0){
+		int digit = num % 10;
+		str[i] = digit + '0';
+		i++;
+		num /=10;
+	}
+	reverseStr(str, i);
+	return i;
+}
+
+/*
+ * function: addline
+ * This function add string [line number] to buf(output buf), and adjust oidx(representing the next position to add)
+ * The last position is always blank space
+*/
+void addline(char* buf, int curline, int* oidx){
+	char str[15];
+	int max;
+	max = its(str, curline);
+	
+	for(int i=0; i<max; i++){
+		buf[*oidx] = str[i];
+		*oidx = *oidx + 1;
+	}
+	buf[*oidx] = ' ';
+	*oidx = *oidx + 1;
+}
+/*
+ * function: addlineidx
+ * This function add string [line number:index] to buf(output buf), and adjst oidx
+ * The last position is alwyas blank space
+ */
+void addlineidx(char* buf, int curline, int curidx, int* oidx){
+	addline(buf, curline, oidx);
+	buf[*oidx-1]=':';
+	addline(buf, curidx, oidx);
+}
 
 

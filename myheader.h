@@ -23,4 +23,5 @@ void cp(char* buf, int idx, int maxidx, char* word);
 void preproc(char* buf, int casenum, int maxidx, char** word, int * wordn);
 
 
+
 #endif

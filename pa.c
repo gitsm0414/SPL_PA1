@@ -14,11 +14,13 @@
 
 char** words;
 
-void cleanup(void){
+void cleanup(char** words){
 	for(int i=0; i<WMAX; i++){
 		free(words[i]);
+		words[i] = NULL;
 	}
 	free(words);
+	words = NULL;
 }
 
 int main(int argc, char* argv[]){
@@ -35,7 +37,7 @@ int main(int argc, char* argv[]){
 	//memory allocating, words
 	words = (char**)malloc(WMAX * sizeof(char*));
 	for(int i=0; i<WMAX; i++){
-		words[i] = (char*)malloc(WMAXL * sizeof(char))
+		words[i] = (char*)malloc(WMAXL * sizeof(char));
 	}
 	int wordnum; //the number of input words
 	int oidx; //current index of obuf
@@ -52,22 +54,23 @@ int main(int argc, char* argv[]){
 	int inputcase;//case 0~4
 	int flag = 1; //if 0, then terminate 'while'
 
-	atexit(cleanup);
-
 	if(argc!=2){  // when the number of arguments is not one, print error and exit
 		write(STDERR_FILENO, inputError, inputErrorNum); 
+		cleanup(words);
 		exit(1);
 	}
 
 	do{
 		if((bytesRead = read(STDIN_FILENO, ibuf, imax))==-1){
 			write(STDERR_FILENO, "input reading error\n", 21);
+			cleanup(words);
 			exit(1);
 		}
 		//checking case
 		inputcase = casereturn(ibuf, (int) bytesRead);
 		if(inputcase==-1){
 			write(STDERR_FILENO, "invald input\n", 14);
+			cleanup(words);
 			exit(1);
 		}
 
@@ -95,6 +98,7 @@ int main(int argc, char* argv[]){
 			//print output
 			if((bytesWrite = write(STDOUT_FILENO, obuf, (size_t)oidx))==-1){
 				write(STDERR_FILENO, "output error\n", 14);
+				cleanup(words);
 				exit(1);
 			}
 			//variable reinitializing
@@ -104,6 +108,6 @@ int main(int argc, char* argv[]){
 
 	}while(flag!=0);
 
-	cleanup();
+	cleanup(words);
 	return 0;
 }
