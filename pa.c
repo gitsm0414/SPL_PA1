@@ -124,10 +124,60 @@ int main(int argc, char* argv[]){
 			}
 			break;
 		case 2:
+			while((bytesRead = readBySentence(fd, fbuf, fmax)) > 0){
+				
+			}
+			if(bytesRead < 0){
+					write(STDERR_FILENO, "file reading error\n", 20);
+					cleanup(words);
+					closefile(fd);
+					exit(1);
+			}
 			break;
 		case 3:
+			while((bytesRead = readBySentence(fd, fbuf, fmax)) > 0){
+				int maxidx = (int) bytesRead;
+				curline = 1;
+				curidx	= 0;
+				int length = len(words[0]);
+
+				for(int i=0; i<(maxidx-length+1);i++){
+					if(fbuf[i]=='\n'){
+						curline++;
+						curidx=0;
+						continue;
+					}
+					if(fbuf[i+length-1]=='\n'){
+						i = i + length - 1;
+						curline++;
+						curidx = 0;
+						continue;
+					}
+					if(isstart(fbuf, i)){
+						if(eqphrase(fbuf, i, maxidx, words[0])){
+							addlineidx(obuf, curline, curidx, &oidx);
+						}	
+					}
+					curidx++;
+				}
+			}
+			if(bytesRead < 0){
+					write(STDERR_FILENO, "file reading error\n", 20);
+					cleanup(words);
+					closefile(fd);
+					exit(1);
+			}	
 			break;
 		case 4:
+			while((bytesRead = readBySentence(fd, fbuf, fmax)) > 0){
+				
+			}
+			if(bytesRead < 0){
+					write(STDERR_FILENO, "file reading error\n", 20);
+					cleanup(words);
+					closefile(fd);
+					exit(1);
+			}
 			break;
 		default:
 		}

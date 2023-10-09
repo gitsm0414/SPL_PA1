@@ -54,7 +54,6 @@ int len(char* ptr){
 	return i;
 }
 
-
 //if buf[idx] is blank, return 1, else 0
 int isblank_(char* buf, int idx){
 	if(buf[idx]==' ' || buf[idx]=='\t' || buf[idx]=='\n') return 1;
@@ -121,11 +120,22 @@ int casereturn(char* buf, int maxidx){
 	return 1;
 }
 
-// copy string(from buf to word)
+// copy word(from buf to word)
 void cp(char* buf, int idx, int maxidx, char* word){
 	char* wordp = word;
 	int blk;
 	while(((blk = isblank_(buf, idx)) != 1) && (idx<maxidx)){
+		*wordp = buf[idx];
+		idx++;
+		wordp++;
+	}
+	*wordp = '\0'; // all word ends '\0'
+}
+// copy phrase
+void cpph(char* buf, int idx, int maxidx, char* word){
+	char* wordp = word;
+	
+	while(((buf[idx]!='\"') && (idx<maxidx))){
 		*wordp = buf[idx];
 		idx++;
 		wordp++;
@@ -155,7 +165,7 @@ void preproc(char* buf, int casenum, int maxidx,  char** word, int* wordn){
 			}
 			break;
 		case 3:
-			cp(buf, 1, maxidx-1, word[0]);
+			cpph(buf, 1, maxidx, word[0]);
 			*wordn = 1;
 			break;
 		case 4:
@@ -181,7 +191,7 @@ int eqphrase(char* buf, int idx, int maxidx, char* word){
 	char widx =0; //word idx
 	char buf_char;
 	char word_char;
-	while((word[widx]='\0')&&(idx<maxidx)){
+	while((word[widx]!='\0')&&(idx<maxidx)){
 		//both are not blank
 		if((isblank_(buf, idx)==0)&&(isblank_(word, widx)==0)){
 			//if uppercase, change to lower case
@@ -202,7 +212,11 @@ int eqphrase(char* buf, int idx, int maxidx, char* word){
 		widx++;
 		idx++;
 	}
-	return 1;
+	if((word[widx]=='\0') && (idx == maxidx)) return 1;
+	if(idx == maxidx) return 0;
+
+	if(isblank_(buf, idx)) return 1;
+	return 0;
 }
 
 /*
@@ -232,20 +246,25 @@ void reverseStr(char* str, int length){
 		str[start] = str[end];
 		str[end] = temp;
 		start++;
-		end++;
+		end--;
 	}
 }
 
 //convert int to string, except '\0', and return the number's max place
 int its(char* str, int num){
 	int i = 0;
+	if(num==0){
+		str[0]='0';
+		return 1;
+	}
 
-	while(i!=0){
+	while(num!=0){
 		int digit = num % 10;
 		str[i] = digit + '0';
 		i++;
 		num /=10;
 	}
+
 	reverseStr(str, i);
 	return i;
 }
